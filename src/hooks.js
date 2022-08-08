@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { v4 as uuid } from "uuid";
 
@@ -49,24 +49,52 @@ const useFlip = () => {
 *   one way to approach this would be to have useAxios have a third element in its return array: 
 *   a function that will remove everything from the array in state.
 */
-const useAxios = () => {
-    const INITIAL_STATE = [];
-    const [response, setResponse] = useState(INITIAL_STATE);
+const useAxios = (localKey) => {
+    // const localKey = 'reactCards';
+    // const INITIAL_STATE = useLocalStorage(localKey, []);
+    // console.log(INITIAL_STATE);
+    const [response, setResponse] = useLocalStorage(localKey);
     const [error, setError] = useState(null);
 
     const getData = async (url, format) => {
         try {
             const res = await axios.get(url);
             const dataFormating = format(res.data);
-            setResponse(cards => [...cards, { ...dataFormating, id: uuid() } ]);
+            setResponse(cards => [...response, { ...dataFormating, id: uuid() } ]);
         } catch (error) {
             setError(error);
         }
     }
     const delData = () => {
-        setResponse(INITIAL_STATE);
+        setResponse([]);
     }
     return [response, getData, delData];
 }
 
-export { useFlip, useAxios };
+
+/** 
+* Further Study: useLocalStorage hook
+*   If we sync our arrays of state data to local storage, we could persist our cards even after a page refresh. 
+*   Let’s build a custom hook called useLocalStorage which works like useState, except it also syncs to local storage 
+*   after every state change, and tries to read from local storage when the component renders.
+*
+*   useLocalStorage should accept two arguments. The first should be a key, corresponding to the key in local storage. 
+*   The second should be an initial value to put into local storage (assuming no value already exists).
+*
+*   Once you have written this hook, refactor useAxios to use useLocalStorage instead of useState.
+*
+*/
+const useLocalStorage = (key, initialValue = []) => {
+    if(window.localStorage.getItem(key)){
+        initialValue = JSON.parse(window.localStorage.getItem(key));
+    }
+    const [localData, setLocalData] = useState(initialValue);
+
+    useEffect(() => {
+        window.localStorage.setItem(key, JSON.stringify(localData));
+    }, [key, localData]);
+
+    return [localData, setLocalData];
+}
+
+export { useFlip, useAxios, useLocalStorage };
