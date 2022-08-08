@@ -10,11 +10,20 @@ import "./PokeDex.css";
 function PokeDex() {
   const [pokemon, setPokemon, delPokemon] = useAxios();
   const addPokemon = async name => {
-    setPokemon(`https://pokeapi.co/api/v2/pokemon/${name}/`);
+    setPokemon(`https://pokeapi.co/api/v2/pokemon/${name}/`, formating);
   };
   const deletePokemon = async () => {
     delPokemon();
   };
+  const formating = (data) => {
+    return {
+      img_front: data.sprites.front_default,      
+      img_back: data.sprites.back_default,      
+      name: data.name,      
+      stats: data.stats      
+    }
+  }
+
   return (
     <div className="PokeDex">
       <div className="PokeDex-buttons">
@@ -25,8 +34,8 @@ function PokeDex() {
         {pokemon.map(cardData => (
           <PokemonCard
             key={cardData.id}
-            front={cardData.sprites.front_default}
-            back={cardData.sprites.back_default}
+            front={cardData.img_front}
+            back={cardData.img_back}
             name={cardData.name}
             stats={cardData.stats.map(stat => ({
               value: stat.base_stat,

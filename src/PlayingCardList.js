@@ -8,11 +8,17 @@ import "./PlayingCardList.css";
 function CardTable() {
   const [cards, setCards, delCards] = useAxios();
   const addCard = async () => {
-    setCards("https://deckofcardsapi.com/api/deck/new/draw/");
+    setCards("https://deckofcardsapi.com/api/deck/new/draw/", formating);
   };
   const deleteCards = async () => {
     delCards();
   };
+  const formating = (data) => {
+    return {
+      image: data.cards[0].image
+    }
+  }
+
   return (
     <div className="PlayingCardList">
       <h3>Pick a card, any card!</h3>
@@ -24,7 +30,7 @@ function CardTable() {
       </div>
       <div className="PlayingCardList-card-area">
         {cards.map(cardData => (
-          <PlayingCard key={cardData.id} front={cardData.cards[0].image} />
+          <PlayingCard key={cardData.id} front={cardData.image} />
         ))}
       </div>
     </div>

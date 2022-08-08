@@ -54,10 +54,11 @@ const useAxios = () => {
     const [response, setResponse] = useState(INITIAL_STATE);
     const [error, setError] = useState(null);
 
-    const getData = async (url) => {
+    const getData = async (url, format) => {
         try {
             const res = await axios.get(url);
-            setResponse(cards => [...cards, { ...res.data, id: uuid() }]);
+            const dataFormating = format(res.data);
+            setResponse(cards => [...cards, { ...dataFormating, id: uuid() } ]);
         } catch (error) {
             setError(error);
         }
