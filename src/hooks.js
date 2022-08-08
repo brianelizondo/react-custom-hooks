@@ -31,6 +31,7 @@ const useFlip = () => {
 *
 *   Once you’ve written this hook, refactor PlayingCardList to use this custom hook.
 *
+*
 * Step Four: useAxios in PokeDex
 *   PokeDex also make AJAX requests, but this one’s a bit trickier. PlayingCardList makes a request to the same endpoint every time, 
 *   but the endpoint in PokeDex depends on the name of the pokemon.
@@ -39,9 +40,18 @@ const useFlip = () => {
 *   and when you want to add to your array of response data in state, you can provide the rest of the url.
 *
 *   Once you’ve done this, refactor PokeDex to use useAxios. Make sure PlayingCardList still works too!
+*
+*
+* Further Study: Removing response data
+*   Add two buttons to the page: one that will erase all of the playing cards in state, and one that will erase all of the pokemon cards.
+*
+*   Since these arrays are controlled from within the useAxios hook, 
+*   one way to approach this would be to have useAxios have a third element in its return array: 
+*   a function that will remove everything from the array in state.
 */
 const useAxios = () => {
-    const [response, setResponse] = useState([]);
+    const INITIAL_STATE = [];
+    const [response, setResponse] = useState(INITIAL_STATE);
     const [error, setError] = useState(null);
 
     const getData = async (url) => {
@@ -52,7 +62,10 @@ const useAxios = () => {
             setError(error);
         }
     }
-    return [response, getData];
+    const delData = () => {
+        setResponse(INITIAL_STATE);
+    }
+    return [response, getData, delData];
 }
 
 export { useFlip, useAxios };
